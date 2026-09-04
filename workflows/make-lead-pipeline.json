@@ -1,0 +1,89 @@
+{
+  "blueprintName": "Tropicaña — Pipeline de Lead (Make → n8n → WhatsApp)",
+  "blueprintCode": "tropicana-lead-pipeline",
+  "blueprintVersion": "1.0.0",
+  "scenarioName": "Lead Tropicana: captura, nivel de oferta y cierre",
+  "description": "Blueprint de Make.com: recibe un evento de lead (webhook de n8n o de ads), valida zona activa, determina nivel de oferta, inserta en Supabase y encola plantilla de WhatsApp vía ManyChat.",
+  "modules": [
+    {
+      "moduleId": 1,
+      "moduleName": "Webhook — recibir lead",
+      "module": "Webhook",
+      "operation": "Receive a webhook request",
+      "mapping": {
+        "phone": "{{1.phone}}",
+        "name": "{{1.name}}",
+        "zona": "{{1.zona}}",
+        "origen": "{{1.origen}}"
+      }
+    },
+    {
+      "moduleId": 2,
+      "moduleName": "Router — ¿zona activa?",
+      "module": "Router",
+      "operation": "Condition",
+      "condition": "{{1.zona}} in list(TROPI_ZONAS_ACTIVAS)"
+    },
+    {
+      "moduleId": 3,
+      "moduleName": "Decidir nivel de oferta",
+      "module": "Tools — Text aggregator",
+      "operation": "Concatenar reglas",
+      "mapping": {
+        "regla1": "Si origen=meta_ads y tipo cuenta=hosteleria -> hosteleria",
+        "regla2": "Si origen=whatsapp_broadcast jugador frecuente -> patronal_supremo",
+        "regla3": "default -> kit_prueba"
+      }
+    },
+    {
+      "moduleId": 4,
+      "moduleName": "Supabase — insert leads",
+      "module": "Supabase",
+      "operation": "Insert Row",
+      "mapping": {
+        "table": "leads",
+        "phone": "{{1.phone}}",
+        "name": "{{1.name}}",
+        "zona": "{{2.zona}}",
+        "origen": "{{1.origen}}",
+        "nivel": "{{3.nivel}}",
+        "estado": "nuevo"
+      }
+    },
+    {
+      "moduleId": 5,
+      "moduleName": "ManyChat — enviar plantilla WhatsApp",
+      "module": "ManyChat",
+      "operation": "Send Flow",
+      "mapping": {
+        "flowId": "flow_tropicana_seguimiento",
+        "phone": "{{1.phone}}"
+      }
+    },
+    {
+      "moduleId": 6,
+      "moduleName": "n8n — notificar equipo",
+      "module": "HTTP",
+      "operation": "Make a request",
+      "mapping": {
+        "url": "{{N8N_WEBHOOK_URL}}",
+        "method": "POST",
+        "body": "{\"evento\":\"lead_hijo_del_pueblo\",\"phone\":\"{{1.phone}}\"}"
+      }
+    }
+  ],
+  "connections": {
+    "1-2": { "from": 1, "to": 2, "type": "data" },
+    "2-3": { "from": 2, "to": 3, "type": "data" },
+    "3-4": { "from": 3, "to": 4, "type": "data" },
+    "4-5": { "from": 4, "to": 5, "type": "data" },
+    "5-6": { "from": 5, "to": 6, "type": "data" }
+  },
+  "webhooks": [
+    {
+      "name": "Tropicaña Lead Hook",
+      "url": "https://hook.make.com/tropicana-lead-entry",
+      "operations": ["receive"]
+    }
+  ]
+}

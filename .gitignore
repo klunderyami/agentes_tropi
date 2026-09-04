@@ -1,0 +1,16 @@
+# === Credenciales y secretos (NUNCA subir) ===
+.env
+.env.*
+!.env.example
+
+# === Node ===
+node_modules/
+
+# === Logs / temporales ===
+*.log
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# === n8n/Make local ===
+.n8n/

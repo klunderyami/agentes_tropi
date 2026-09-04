@@ -1,0 +1,14 @@
+{
+  "name": "agentes-tropi-core",
+  "version": "1.0.0",
+  "description": "Orquestador central de los agentes autónomos de Tropicaña (prompts + conectores de API).",
+  "main": "index.js",
+  "type": "commonjs",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "agents:list": "node index.js --list",
+    "agent:run": "node index.js"
+  },
+  "keywords": ["tropicana", "agentes", "automatizacion", "whatsapp", "anthropic"],
+  "license": "UNLICENSED"
+}

@@ -1,0 +1,85 @@
+{
+  "name": "Tropicaña — Lead WhatsApp → CRM Supabase → Notificación",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "lead-entry",
+        "responseMode": "onReceived",
+        "responseData": "allEntries",
+        "options": {}
+      },
+      "id": "webhook-lead-entry",
+      "name": "Webhook Lead Entry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            { "id": "name", "name": "name", "value": "={{ $json.body.name }}" },
+            { "id": "phone", "name": "phone", "value": "={{ $json.body.phone }}" },
+            { "id": "zona", "name": "zona", "value": "={{ $json.body.zona }}" },
+            { "id": "origen", "name": "origen", "value": "={{ $json.body.origen || 'whatsapp' }}" },
+            { "id": "nivel", "name": "nivel", "value": "={{ $json.body.nivel || 'kit_prueba' }}" },
+            { "id": "estado", "name": "estado", "value": "={{ $json.body.estado || 'nuevo' }}" },
+            { "id": "score", "name": "score", "value": "={{ $json.body.score || 0 }}" }
+          ]
+        }
+      },
+      "id": "normalizar-lead",
+      "name": "Normalizar Lead",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "tableId": "leads",
+        "dataMode": "defineBelow",
+        "fieldsToSend": "defineBelow",
+        "options": {
+          "conflictType": "onConflict",
+          "upsert": true
+        }
+      },
+      "id": "supabase-leads",
+      "name": "Supabase — upsert leads",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1.1,
+      "position": [440, 0],
+      "credentials": { "supabaseApi": { "id": "1", "name": "Tropicaña Supabase" } }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.N8N_WEBHOOK_URL }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ evento: 'nuevo_lead', lead: $json }) }}",
+        "options": {}
+      },
+      "id": "notificar-interno",
+      "name": "Notificar a Tropicaña WhatsApp",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [640, 0]
+    }
+  ],
+  "connections": {
+    "Webhook Lead Entry": {
+      "main": [[{ "node": "Normalizar Lead", "type": "main", "index": 0 }]]
+    },
+    "Normalizar Lead": {
+      "main": [[{ "node": "Supabase — upsert leads", "type": "main", "index": 0 }]]
+    },
+    "Supabase — upsert leads": {
+      "main": [[{ "node": "Notificar a Tropicaña WhatsApp", "type": "main", "index": 0 }]]
+    }
+  },
+  "active": false,
+  "settings": { "executionOrder": "v1" },
+  "tags": ["tropicana", "lead", "whatsapp", "supabase"]
+}
