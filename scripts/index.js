@@ -5,7 +5,9 @@
  * Uso:
  *   node scripts/index.js --list
  *   node scripts/index.js --agent AGT-NEG-CP --input '{"zona":"Boca del Río"}'
+ *   node scripts/index.js --agent lp --input 'Brief en lenguaje natural'
  *
+ * `--agent` acepta el ID formal (AGT-NEG-LP) o el alias corto (lp, cp, ca, ...).
  * Carga el System Prompt del agente (.md), lo envía a Anthropic y devuelve
  * la salida JSON/Markdown solicitada por cada agente.
  */
@@ -29,7 +31,10 @@ async function main() {
   if (!id) {
     console.error(
       'Uso:\n  node scripts/index.js --list\n' +
-        "  node scripts/index.js --agent AGT-NEG-WT --input '{\"zona\":\"Boca del Río\"}'\n",
+        "  node scripts/index.js --agent AGT-NEG-WT --input '{\"zona\":\"Boca del Río\"}'\n" +
+        "  node scripts/index.js --agent lp --input 'Brief en lenguaje natural'\n" +
+        'Alias cortos disponibles: cp, lp, ca, wt, pc, fg, vh, ir, sc, sw, ps, md,\n' +
+        '  ma, ga, al, mz, tc, as, wa, fm, co, wd, cc, cv, ha, rp, ck, vm, sa, cs, fq, gg\n',
     );
     process.exit(1);
   }
@@ -37,11 +42,20 @@ async function main() {
   const agent = getAgent(id);
   const system = loadPrompt(agent);
 
-  // El input llega como JSON string; si viene un objeto directo, se serializa.
+  // El input puede llegar como JSON string o como texto libre (brief en
+  // lenguaje natural). Si es JSON válido, se normaliza serializado; si no,
+  // se envía tal cual sin romper el flujo.
   const rawInput = args.input ?? null;
   let userInput = rawInput;
-  const parsed = safeJsonParse(rawInput, 'input de usuario');
-  if (parsed !== null) userInput = JSON.stringify(parsed);
+  if (rawInput !== null && rawInput !== undefined) {
+    try {
+      const parsed = safeJsonParse(rawInput, 'input de usuario');
+      if (parsed !== null) userInput = JSON.stringify(parsed);
+    } catch (err) {
+      // No es JSON (ej. un brief en lenguaje natural): usar el texto tal cual.
+      userInput = rawInput;
+    }
+  }
 
   if (process.env.TROPI_DEBUG === '1') {
     outJson({ agent: agent.id, name: agent.name, promptFile: agent.file, input: userInput });

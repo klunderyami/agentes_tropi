@@ -78,26 +78,67 @@ const MODULES = [
   },
 ];
 
-/** Devuelve el catálogo completo: [{ id, name, file, module, folder }] */
+/** Devuelve el catálogo completo: [{ id, alias, name, file, module, folder }] */
 function catalog() {
   const list = [];
   for (const mod of MODULES) {
     for (const a of mod.agents) {
-      const id = `${mod.prefix}-${a.file.replace('.md', '').toUpperCase()}`;
-      list.push({ id, name: a.name, file: a.file, module: mod.prefix, folder: mod.folder });
+      const base = a.file.replace('.md', '');
+      const id = `${mod.prefix}-${base.toUpperCase()}`;
+      list.push({
+        id,
+        alias: base,
+        name: a.name,
+        file: a.file,
+        module: mod.prefix,
+        folder: mod.folder,
+      });
     }
   }
   return list;
 }
 
-/** Busca un agente por ID (e.g. AGT-NEG-CP). Lanza si no existe. */
+/**
+ * Busca un agente aceptando los siguientes formatos en `--agent`:
+ *   1. ID formal                → AGT-NEG-LP, agt-neg-lp
+ *   2. Alias corto              → lp, ca, wt, pc, fg, ...
+ *   3. Alias con sufijo de módulo → neg-cp, ads-ca, seo-cp, soc-ps (desambigua duplicados)
+ *
+ * Nota: los alias cortos duplicados entre módulos (cp, ca, ps) resuelven al
+ * primer módulo del catálogo (01-negocio > 02-social > 03-ads > ...). Para
+ * llegar al otro agente se usa el alias con sufijo de módulo (ej. `seo-cp`,
+ * `ads-ca`, `seo-ps`).
+ */
 function getAgent(id) {
-  const found = catalog().find((a) => a.id.toLowerCase() === String(id).toLowerCase());
-  if (!found) {
-    const ids = catalog().map((a) => a.id).join(', ');
-    throw new Error(`Agente desconocido: ${id}. IDs válidos: ${ids}`);
-  }
-  return found;
+  if (!id) throw new Error('Falta el identificador del agente (--agent).');
+  const raw = String(id).trim();
+  const lower = raw.toLowerCase();
+  const list = catalog();
+
+  // 1) ID formal exacto (case-insensitive)
+  let found = list.find((a) => a.id.toLowerCase() === lower);
+  if (found) return found;
+
+  // 2) Alias corto (precedencia por orden de módulos en el catálogo)
+  found = list.find((a) => a.alias.toLowerCase() === lower);
+  if (found) return found;
+
+  // 3) Alias con sufijo de módulo para desambiguar duplicados: neg-cp, ads-ca, seo-ps…
+  found = list.find(
+    (a) => `${a.module.toLowerCase().replace('agt-', '')}-${a.alias.toLowerCase()}` === lower,
+  );
+  if (found) return found;
+
+  // 4) Prefijo compacto sin guion: negcp, adsca, seops…
+  found = list.find(
+    (a) =>
+      `${a.module.toLowerCase().replace('agt-', '')}${a.alias.toLowerCase()}` === lower ||
+      `${a.module.toLowerCase()}${a.alias.toLowerCase()}` === lower,
+  );
+  if (found) return found;
+
+  const validIds = list.map((a) => `${a.id} (alias: ${a.alias})`).join(', ');
+  throw new Error(`Agente desconocido: ${raw}. IDs y aliases válidos: ${validIds}`);
 }
 
 /** Lee el System Prompt completo del agente (su archivo .md). */
