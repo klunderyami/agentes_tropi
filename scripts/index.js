@@ -18,6 +18,31 @@ const { catalog, getAgent, loadPrompt } = require('./src/agents');
 const { askAnthropic } = require('./src/providers/anthropic');
 const { parseArgs, safeJsonParse, outJson } = require('./src/utils');
 
+/**
+ * Payload de demostracion local (contrato de salida) sin llamar a Anthropic.
+ * Se activa con TROPI_DEMO=1 o con el flag --demo. Util para validar la
+ * resolucion de alias, la carga del prompt y el formato de salida cuando la
+ * ANTHROPIC_API_KEY aun no es valida.
+ */
+function buildDemoPayload(agent, input) {
+  const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
+  return {
+    modo: 'DEMO_LOCAL',
+    agente: agent.id,
+    alias: agent.alias,
+    nombre: agent.name,
+    input: input || null,
+    nota: 'Demo generado en local sin Anthropic. Sustituya ANTHROPIC_API_KEY en .env para generar el payload real.',
+    estructura: {
+      gancho: '0-3s: interrupcion de patron visual/emocional en el scroll (hielo+chorro espeso)',
+      reel: ['hook 0-3s', 'desarrollo 3-12s', 'anclaje de niveles 12-18s', 'CTA 18-22s'],
+      caption: 'caption con disparadores sensoriales: frialdad del hielo, textura cremosa del torito, aroma a cacao/cacahuate',
+      reciprocidad: 'recetario de toritos a cambio del numero de WhatsApp (valor primero, dato despues)',
+      manychat: 'triggerManyChatFlow({ subscriberId, flowId: "flow_torito_captura" })',
+    },
+    cta,
+  };
+}
 async function main() {
   const args = parseArgs(process.argv.slice(2));
 
@@ -55,6 +80,12 @@ async function main() {
       // No es JSON (ej. un brief en lenguaje natural): usar el texto tal cual.
       userInput = rawInput;
     }
+  }
+
+  const demoMode = process.env.TROPI_DEMO === '1' || Boolean(args.demo);
+  if (demoMode) {
+    outJson(buildDemoPayload(agent, userInput));
+    return;
   }
 
   if (process.env.TROPI_DEBUG === '1') {

@@ -25,6 +25,10 @@
 > responden corto y se invita a DM (no se discute precio en público); lenguaje
 > veracruzano; palabras clave (precio, kit, colonia, garrafa, dónde) → derivación
 > inmediata a WT vía CRM; spam/insultos se bloquean con plantilla cordial.
+> Regla de reciprocidad inmediata: al detectar intención, se ofrece el imán (recetario
+> de toritos veracruzanos, guía de maridaje o cupón) para obtener el WhatsApp de forma
+> natural: “Te mando el recetario de toritos ¿me escribes al WhatsApp y te llega?” —
+> el valor se entrega primero y el número se captura como recompensa.
 
 ## 🎯 Rol y misión
 

@@ -23,6 +23,15 @@
 >
 > Reglas de formato: hook móvil vertical 9:16, < 3 s, subtítulos con contraste, sin
 > intro de marca (la marca se muestra después del hook), velocidad de corte alta.
+> Regla de reciprocidad inmediata: si la campaña lleva imán (recetario de toritos
+> veracruzanos, guía de maridaje, cupón de primer pedido), el overlay final del hook
+> lo entrega ANTES de pedir el dato: “DM TORITO y te mando el recetario” — valor
+> primero, número después. El overlay nunca pide el contacto sin haber dado el
+> gancho de valor.
+>
+> Tropicaña también lanza línea artesanal de toritos/licores veracruzanos (p.ej.
+> Torito de Cacahuate): el hook sensorial cubre tanto la frescura del hielo como la
+> textura cremosa y aromática del licor (cacao, canela, cacahuate).
 
 ## 🎯 Rol y misión
 

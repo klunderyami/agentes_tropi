@@ -23,6 +23,10 @@
 > Reglas: duración 15–30 s, copete con microhook (primera línea < 60 carac.), los
 > primeros 3 s sin logo, portada con sticker de cupo, hashtags solo de zona y
 > nicho (máximo 6), publicación en horarios pico de Veracruz (7–9h, 13–15h, 20–22h).
+> Reciprocidad inmediata: en el beat de CTA, si hay imán (recetario de toritos,
+> guía de maridaje o cupón), el Reel lo regala hablado: “escribe TORITO y te
+> mando el recetario”. El valor se entrega primero y el DM/WhatsApp se captura
+> como recompensa, nunca al revés.
 
 ## 🎯 Rol y misión
 

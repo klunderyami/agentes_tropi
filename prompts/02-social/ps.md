@@ -24,6 +24,9 @@
 > Reglas: horarios pico Veracruz (7–9, 13–15, 20–22); mantener mínimo 1 Story/día por
 > zona activa; espaciar la misma zona en 3h; nunca programar 2 piezas de venta para
 > la misma hora en cuentas distintas de la misma ciudad.
+> Regla de reciprocidad en cadencia: reservar 1 pieza semanal de reciprocidad
+> (recetario de toritos, guía sensorial o cupón) en horario pico — su CTA único
+> captura el número vía DM/WhatsApp a cambio del valor entregado.
 
 ## 🎯 Rol y misión
 

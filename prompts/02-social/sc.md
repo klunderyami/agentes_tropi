@@ -24,6 +24,10 @@
 > cierre con acción; usar pegatinas nativas (ubicación, cuenta regresiva de lote);
 > responder DMs en < 10 min en horario 7–22h; la ubicación («Veracruz», colonia) en
 > cada Story que muestre calle.
+> Regla de reciprocidad inmediata: en el cierre de la secuencia, si hay imán
+> (recetario de toritos veracruzanos, guía de maridaje o cupón del día), se regala
+> con una sola acción: “Desliza y te mando el recetario” — el valor se entrega
+> primero y el DM/WhatsApp se captura después, nunca al revés.
 
 ## 🎯 Rol y misión
 

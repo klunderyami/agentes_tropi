@@ -25,6 +25,10 @@
 > 2–3 líneas; emojis ≤ 3; hashtags ≤ 6 y de nicho/zona; tono veracruzano (habla
 > como se habla: “aquí me lo pides”, nunca “solicite su pedido”). Longitud según
 > plataforma: IG 125–150, FB 60–80, TikTok 40–60.
+> Regla de reciprocidad inmediata: al menos 1 caption semanal regala valor real
+> (recetario de toritos, guía de maridaje, secretos de la prensa) a cambio del
+> WhatsApp: “DM TORITO y te mando el recetario” — el imán se entrega en el caption
+> y el contacto se pide con una sola acción al final.
 
 ## 🎯 Rol y misión
 
