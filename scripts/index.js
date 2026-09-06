@@ -110,6 +110,129 @@ function buildAdsDemoPayload(agent, input) {
   }
 }
 /**
+ * Payload de demostracion local para el modulo 04-Ingenieria (contrato de
+ * salida) sin llamar a Anthropic. Muestra estructura de mensaje/plantilla,
+ * payload de webhook y estado de la base de datos (Supabase leads).
+ */
+function buildEngDemoPayload(agent, input) {
+  const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
+  const base = { modo: 'DEMO_LOCAL', modulo: '04-ingenieria', agente: agent.id, alias: agent.alias, nombre: agent.name, input: input || null };
+  const conectores = {
+    supabase: { tabla: 'leads', upsert: 'upsertLead({ table: "leads", row, onConflict: "phone" })', normaliza: 'phone E.164 +52' },
+    webhooks: { n8n: '{{N8N_WEBHOOK_URL}}/webhook/lead-entry', make: '{{MAKE_WEBHOOK_URL}}' },
+    whatsapp: { api: 'WhatsApp Business Cloud API', idioma: 'es_MX', templates: 'tropi_bienvenida_niveles, tropi_seguimiento_margen, tropi_reapertura_24h' },
+  };
+  switch (agent.alias) {
+    case 'wa':
+      return Object.assign({}, base, {
+        conectores,
+        tipo: 'plantilla_nueva',
+        nombre_plantilla: 'tropi_bienvenida_niveles',
+        categoria: 'MARKETING',
+        idioma: 'es_MX',
+        body: 'Hola {{1}}, en {{2}} el lote de hoy sale a {{3}}. Patronal {{4}} · Hostelería {{5}} · Kit {{6}}. ¿Cuál te aparto?',
+        variables: ['nombre', 'zona', 'fecha_lote', 'precio_patronal', 'precio_hosteleria', 'precio_kit'],
+        botones: [
+          { tipo: 'QUICK_REPLY', texto: 'Hostelería' },
+          { tipo: 'QUICK_REPLY', texto: 'Kit Prueba' },
+          { tipo: 'URL', url: cta },
+        ],
+        mensaje: {
+          to: '+5212290000000',
+          tipo_envio: 'template fuera de ventana 24h',
+          payload: '{"messaging_product":"whatsapp","to":"+5212290000000","type":"template","template":{"name":"tropi_bienvenida_niveles","language":{"code":"es_MX"}}}',
+          dentro_ventana: 'sendWhatsApp({ to, text }) para texto libre con copy sensorial',
+        },
+        webhook: { eventos: ['messages', 'statuses'], firma: 'X-Hub-Signature-256', handler: 'POST /webhook/whatsapp -> validar firma -> procesar evento -> registrar en supabase.leads' },
+        base_de_datos: { estado_lead: 'nuevo -> contacto', update: 'upsertLead({ row: { phone, estado: "contacto", nota: "plantilla enviada" } })', deduplicacion: 'on_conflict=phone (sin duplicados)' },
+        siguiente_paso: 'responder boton quick reply -> handoff a WT',
+        cta,
+      });
+    case 'tc':
+      return Object.assign({}, base, {
+        conectores,
+        flujo: { nombre: 'lead-whatsapp-supabase', plataforma: 'n8n / Make', version: '1.1.0' },
+        nodos: [
+          { nombre: 'Webhook Lead Entry', tipo: 'webhook', path: 'lead-entry', activo: true },
+          { nombre: 'Normalizar Lead', tipo: 'set', campos: ['name', 'phone', 'zona', 'origen', 'nivel', 'estado', 'score'] },
+          { nombre: 'Supabase upsert leads', tipo: 'supabase', tabla: 'leads', on_conflict: 'phone' },
+          { nombre: 'Notificar WT/Interno', tipo: 'http', url: '{{N8N_WEBHOOK_URL}}', metodo: 'POST' },
+        ],
+        env_requeridas: ['SUPABASE_URL', 'SUPABASE_KEY', 'N8N_WEBHOOK_URL', 'MAKE_WEBHOOK_URL', 'WHATSAPP_TOKEN'],
+        prueba: { payload: '{"phone":"+5212281234567","zona":"Xalapa"}', resultado: 'row ok en leads + notificacion enviada' },
+        blueprint: 'workflows/n8n-lead-whatsapp-supabase.json | workflows/make-lead-pipeline.json',
+        siguiente_paso: 'importar blueprint, probar webhook, activar',
+        cta,
+      });
+    case 'as':
+      return Object.assign({}, base, {
+        conectores,
+        sistema: 'Tropi-Pipeline v2',
+        entrada: ['meta_ads_webhook', 'google_ads_webhook', 'formulario_landing', 'wa_broadcast'],
+        nodo_inicial: { accion: 'normalizar_lead', campos: ['phone', 'zona', 'origen'], regla_nivel: 'B2B->hosteleria | broadcast_frecuente->patronal_supremo | default->kit_prueba' },
+        rama_feliz: ['upsert_supabase_leads', 'disparar_flow_manychat', 'notificar_interno'],
+        rama_fallo: [
+          { evento: 'supabase_offline', accion: 'colas + retry 3 con backoff 2m' },
+          { evento: 'zona_sin_cupo', accion: 'rama_lista_de_espera' },
+          { evento: 'template_rechazado', accion: 'cae a texto 24h o ticket a WA' },
+        ],
+        inventario: { tabla: 'leads', upserts_periodo: 130, deduplicacion: 'phone unico', metricas: ['tasa_paso_leads', 'tiempo_webhook_a_wa', '%_reintentos_ok'] },
+        cta,
+      });
+    case 'fm':
+      return Object.assign({}, base, {
+        conectores,
+        pieza: 'form_landing_kit_veracruz',
+        campos: [
+          { name: 'name', type: 'text', label: 'Tu nombre', obligatorio: true },
+          { name: 'phone', type: 'tel', label: 'Tu WhatsApp', obligatorio: true, normaliza: 'E.164:+52' },
+          { name: 'zona', type: 'select', opciones: 'TROPI_ZONAS_ACTIVAS', cupo_visible: true },
+        ],
+        nivel_selector: { tipo: 'radio_3', opciones: ['patronal_supremo', 'hosteleria', 'kit_prueba'], precios: ['{{precio}}', '{{precio}}', '{{precio}}'] },
+        webhook: { url: '{{N8N_WEBHOOK_URL}}', metodo: 'POST', content_type: 'application/json' },
+        animaciones_ui: { entrada: 'fade+translateY 300ms', nivel: 'highlight del kit elegido', cta: 'pulse sutil en "Hablar por WhatsApp"' },
+        eventos_pixel: ['ViewContent', 'Lead', 'WhatsAppClick'],
+        boton_principal: 'Hablar por WhatsApp',
+        cta,
+      });
+    case 'co':
+      return Object.assign({}, base, {
+        conectores,
+        flujo_secuencia: 'client_onboarding_torito',
+        nodos: [
+          { id: 'bienvenida', accion: 'saludo + anclaje 3 niveles', botones: ['patronal_supremo', 'hosteleria', 'kit_prueba'] },
+          { id: 'duda', accion: 'comparacion margen +65% vs sustituto', salida: 'vuelve a decision' },
+          { id: 'cupo', accion: 'consultar_cupo', fuente: 'supabase.leads | cupos', salida_si_hay: 'oferta_zona', salida_no_hay: 'lista_espera' },
+          { id: 'handoff', accion: 'transferir_a_WT', adjunta: ['nivel', 'nota', 'phone'] },
+        ],
+        post_venta: { secuencia: 'dia1->confirmacion entrega | dia7->recetario toritos | dia28->recompra por zona con cupo', iman: 'recetario_toritos a cambio de WhatsApp', cadencia: 'max 1 mensaje util/dia' },
+        keywords: { precio: ['cuesta', '$$', 'precio'], zona: ['colonia', 'donde', 'zona'], hoy: ['hoy', 'ahora'] },
+        fallback: { max_intentos: 2, accion: 'transferir_a_WT' },
+        flag_escasez: 'TROPI_ZONAS_ACTIVAS + cupo_crm',
+        cta,
+      });
+    case 'wd':
+      return Object.assign({}, base, {
+        conectores,
+        url: 'https://tropicana.mx/lp/veracruz-torito',
+        zona: 'Veracruz Centro',
+        secciones: [
+          { id: 'hero', tipo: 'video_autoplay_muted', cta: cta },
+          { id: 'anchoring', tipo: '3_niveles', precios: ['{{precio}}', '{{precio}}', '{{precio}}'] },
+          { id: 'perdida', tipo: 'comparativa', concepto: 'nevera sustituto vs prensa' },
+          { id: 'escasez', tipo: 'contador_cupo', fuente: 'cmr_webhook', zona: 'Veracruz Centro' },
+        ],
+        pixel: { eventos: ['ViewContent', 'Lead', 'WhatsAppClick'], dataLayer: true },
+        formulario: { action: '{{N8N_WEBHOOK_URL}}', campos: ['name', 'phone', 'zona'] },
+        conectores_api: { webhook: '{{N8N_WEBHOOK_URL}}', supabase_fetch: 'cupo via fetch ligero al CRM', cta_wa: 'wa.me/52XXXXXXXXXX?text=TORITO+Veracruz' },
+        checklist: ['CWV_lcp<2.5s', 'inp<200ms', 'cli=0', 'accesible_AA', 'meta_og'],
+        cta,
+      });
+    default:
+      return Object.assign({}, base, { conectores, nota: 'Payload de ingenieria generico (sin caso especifico).', cta });
+  }
+}
+/**
  * Payload de demostracion local (contrato de salida) sin llamar a Anthropic.
  * Se activa con TROPI_DEMO=1 o con el flag --demo. Util para validar la
  * resolucion de alias, la carga del prompt y el formato de salida cuando la
@@ -117,6 +240,7 @@ function buildAdsDemoPayload(agent, input) {
  */
 function buildDemoPayload(agent, input) {
   if (agent.module === 'AGT-ADS') return buildAdsDemoPayload(agent, input);
+  if (agent.module === 'AGT-ENG') return buildEngDemoPayload(agent, input);
   const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
   return {
     modo: 'DEMO_LOCAL',
