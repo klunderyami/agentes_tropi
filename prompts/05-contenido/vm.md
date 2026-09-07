@@ -28,7 +28,8 @@
 > Reglas: periodicidad por plataforma (Reels/TikTok 3–5/semana, YouTube 1/semana),
 > horarios pico de Veracruz (7–9h, 13–15h, 20–22h), embedded del píxel de Meta en
 > landing para retargeting de la misma zona, y reporte semanal de vistas → DMs →
-> leads con atribución por pieza.
+> leads con atribución por pieza. La programación usa los webhooks de distribución
+> (`N8N_WEBHOOK_URL` / `MAKE_WEBHOOK_URL`) para publicar cada versión en su red.
 
 ## 🎯 Rol y misión
 

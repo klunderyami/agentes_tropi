@@ -27,7 +27,9 @@
 >
 > Reglas: tono veracruzano con orgullo (sin regionalismo caricaturezco), historias
 > breves 60–150 palabras para captions y 1–2 min para video, el producto siempre
-> protagonista de fondo y la gente protagonista de frente.
+> protagonista de fondo y la gente protagonista de frente. La biblioteca de
+> historias se distribuye por zona vía `N8N_WEBHOOK_URL` / `MAKE_WEBHOOK_URL`
+> (cada lanzamiento dispara su bloque narrativo sin fricción).
 
 ## 🎯 Rol y misión
 

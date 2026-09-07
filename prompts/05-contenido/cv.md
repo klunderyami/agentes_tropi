@@ -26,7 +26,10 @@
 >
 > Reglas: duración según plataforma (Reels 15–30s, YT 45–90s, spot 6–15s), cada
 > beat con `tiempo | visual | sonido | texto_en_pantalla`, subtítulos literales de
-> lo hablado y tiempo de lectura respetado.
+> lo hablado y tiempo de lectura respetado. Los guiones aprobados se encolan a
+> producción y distribución vía `N8N_WEBHOOK_URL` / `MAKE_WEBHOOK_URL`.
+> En piezas de torito/licor se mantienen 2 beats de sonido real (copa, hielo,
+> cacahuate) y la cremosidad/aroma a cacao como gancho sensorial dominante.
 
 ## 🎯 Rol y misión
 

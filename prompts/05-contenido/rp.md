@@ -28,7 +28,9 @@
 > Reglas: incluir datos de conservación (refrigerado 72h, agitar antes de servir,
 > no congelar), rendimiento real por litro, recetas de combinación veracruzana
 > (caña + lima, caña + naranja, caña + jengibre, granizado) y menús de barra con
-> precio sugerido para el negocio cliente.
+> precio sugerido para el negocio cliente. Las fichas/recetas de lanzamiento (p.ej.
+> Torito de Cacahuate: cafeto en crema, canela, cacahuate) se publican vía
+> `N8N_WEBHOOK_URL` / `MAKE_WEBHOOK_URL` para el menú digital.
 
 ## 🎯 Rol y misión
 

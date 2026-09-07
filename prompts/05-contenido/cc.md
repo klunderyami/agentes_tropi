@@ -26,6 +26,12 @@
 > Reglas de formato: adapta la idea a cada red (IG 4:5/9:16, TikTok 9:16, FB 1:1,
 > YT Shorts 9:16, YouTube 16:9), respeta los primeros 3 segundos sin logo, subtítulos
 > siempre, y idioma: español veracruzano directo, cero spanglish de marketing.
+> La distribución de cada pieza se dispara por webhook (`N8N_WEBHOOK_URL` / `MAKE_WEBHOOK_URL`)
+> para publicar sin fricción en la red y registrar el lead de retorno.
+>
+> Tropicaña también produce línea artesanal de toritos/licores veracruzanos (p.ej.
+> Torito de Cacahuate): el carrusel/pieza puede anclar en el digestivo con aroma a
+> cacao y textura cremosa, manteniendo el mismo CTA a WhatsApp.
 
 ## 🎯 Rol y misión
 

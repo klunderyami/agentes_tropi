@@ -233,6 +233,115 @@ function buildEngDemoPayload(agent, input) {
   }
 }
 /**
+ * Payload de demostracion local para el modulo 05-Contenido (contrato de
+ * salida) sin llamar a Anthropic. Muestra estructura de piezas, ganchos
+ * visuales/sensoriales, CTA y conexion con los webhooks de distribucion.
+ */
+function buildConDemoPayload(agent, input) {
+  const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
+  const base = { modo: 'DEMO_LOCAL', modulo: '05-contenido', agente: agent.id, alias: agent.alias, nombre: agent.name, input: input || null };
+  const nucleo = {
+    sensorial: 'texturas cremosas, hielo, aroma a cacao/cafe, tradicion cañera veracruzana',
+    disparadores: 'CTA directo a WhatsApp o landing web (wa.me con palabra clave)',
+    distribucion: { n8n: '{{N8N_WEBHOOK_URL}}', make: '{{MAKE_WEBHOOK_URL}}' },
+  };
+  switch (agent.alias) {
+    case 'cc':
+      return Object.assign({}, base, {
+        nucleo,
+        pieza: 'carrusel_informativo_comercial',
+        formato: 'carrusel_1x1_10slides',
+        titulo: '5 Razones por las que el Torito Veracruzano es el mejor digestivo artesanal',
+        slides: [
+          { n: 1, gancho_visual: 'copa empanada con hielo cayendo (macro)', copy: 'Razon 1: se siente en el primer sorbo', cta: null },
+          { n: 2, gancho_visual: 'textura cremosa del torito al servir', copy: 'Razon 2: cremosidad que no tiene el embotellado', cta: null },
+          { n: 3, gancho_visual: 'cacao y cacahuate en grano sobre madera', copy: 'Razon 3: aroma a cacao de verdad', cta: null },
+          { n: 4, gancho_visual: 'mano veracruzana sirviendo copa artesanal', copy: 'Razon 4: tradicion cañera de Veracruz', cta: null },
+          { n: 5, gancho_visual: 'lote fresco con sello artesanal y zona', copy: 'Razon 5: digestivo natural, lote fresco por zona', cta: null },
+        ],
+        cierre: { gancho_visual: 'tablero de 3 niveles con precios', copy: 'Kit, Hosteleria o Patronal — tu eliges', cta_principal: 'Escribe TORITO al WhatsApp' },
+        disparadores_compra: ['escasez honesta: cupo por zona', 'reciprocidad: recetario a cambio del WhatsApp', 'CTA unico por slide final'],
+        distribucion: nucleo.distribucion,
+        cta,
+      });
+    case 'cv':
+      return Object.assign({}, base, {
+        nucleo,
+        guion: { titulo: 'El torito que se bebe lento', plataforma: 'reels', duracion: 18 },
+        beats: [
+          { t: '0-3', visual: 'chorro cremoso de torito, hielo entrando', sonido: 'copa + hielo', texto: 'NO ES LICOR, ES DIGESTIVO' },
+          { t: '3-9', visual: 'cae el cacao, se revuelve crema', sonido: 'cucharilla + exclamacion', texto: 'cacahuate, canela y caña' },
+          { t: '9-14', visual: '3 niveles en pantalla', sonido: 'silencio + amb', texto: 'Kit · Hosteleria · Patronal' },
+          { t: '14-18', visual: 'close copa + boton WhatsApp', sonido: 'clack', texto: 'ESCRIBE TORITO' },
+        ],
+        cta,
+      });
+    case 'ha':
+      return Object.assign({}, base, {
+        nucleo,
+        tipo: 'serie_zona',
+        zona: 'Veracruz Centro',
+        titulo: 'La abuela y el torito del domingo',
+        historia: 'Cada domingo la abuela prensaba caña y espesaba el torito con cacao de su pueblo; hoy esa misma crema se sirve en tu mesa (60-150 palabras)',
+        pilar: 'sensory | tradicion_canera',
+        estribillo: 'El torito no se anuncia: se recuerda por el aroma.',
+        formatos: [
+          { canal: 'instagram_caption', cta: 'escribe CAÑA/TORITO' },
+          { canal: 'tiktok_voz_off', duracion: 75, musica: 'ninguna, sonido real de la prensa' },
+        ],
+        cta,
+      });
+    case 'rp':
+      return Object.assign({}, base, {
+        nucleo,
+        producto: 'Torito de Cacahuate Artesanal',
+        formato: 'botella_750ml',
+        zona_lote: 'Veracruz Centro',
+        ficha: { composicion: 'cacahuate, cacao, canela, caña veracruzana', conservacion: 'fresco, agitar antes de servir', servicio: 'con hielo, copa empañada' },
+        recetas: [
+          { nombre: 'Torito tradicional', ingredientes: ['torito 60ml', 'hielo', 'cascara de naranja'], costo_por_copa: '{{precio}}' },
+          { nombre: 'Torito con café', ingredientes: ['torito 45ml', 'café veracruzano 30ml', 'canela'], costo_por_copa: '{{precio}}' },
+        ],
+        disparador_compra: 'menu de barra + pedido por WhatsApp',
+        distribucion: nucleo.distribucion,
+        cta,
+      });
+    case 'ck':
+      return Object.assign({}, base, {
+        nucleo,
+        campana: 'kit_torito_fin_de_semana',
+        zona: 'Veracruz Centro',
+        cupo: 30,
+        lote: 'SEM 12 | VC',
+        kits: [
+          { nombre: 'Kit Calle', contenido: '2 botellas torito', precio: '{{precio}}', rol: 'ancla' },
+          { nombre: 'Kit Barra', contenido: '5 botellas + 2 copas', precio: '{{precio}}', rol: 'caballo_de_batalla' },
+          { nombre: 'Kit Patronal', contenido: '1 caja 12 botellas', precio: '{{precio}}', rol: 'premium' },
+        ],
+        garantia: 'Si el primer copeo no convence, el siguiente no se cobra.',
+        disparador_compra: 'CTA 2 pasos: Kit -> WhatsApp',
+        distribucion: { webhook: '{{N8N_WEBHOOK_URL}}', lote_cupo_copy: true },
+        cta,
+      });
+    case 'vm':
+      return Object.assign({}, base, {
+        nucleo,
+        pieza: 'reel_torito_veracruz_18s',
+        zona: 'Veracruz Centro',
+        distribucion: [
+          { plataforma: 'instagram_reels', fecha: 'jue_20:30', formato: '9x16_18s', ancla: 'kit', cta: 'DM: TORITO', boost: 150 },
+          { plataforma: 'tiktok', fecha: 'vie_19:00', formato: '9x16_15s', ancla: 'kit', cta: 'WA: TORITO' },
+          { plataforma: 'youtube_shorts', fecha: 'sab_11:00', formato: '9x16_45s', ancla: 'hosteleria', cta: 'comentario + WA' },
+        ],
+        distribucion_webhooks: { n8n: '{{N8N_WEBHOOK_URL}}', make: '{{MAKE_WEBHOOK_URL}}', programacion: 'cada version se publica por webhook' },
+        kpis: ['impresiones', 'DMs_keyword', 'leads_CRM', 'botellas_vendidas'],
+        cta,
+      });
+    default:
+      return Object.assign({}, base, { nucleo, nota: 'Payload de contenido generico (sin caso especifico).', cta });
+  }
+}
+/**
  * Payload de demostracion local (contrato de salida) sin llamar a Anthropic.
  * Se activa con TROPI_DEMO=1 o con el flag --demo. Util para validar la
  * resolucion de alias, la carga del prompt y el formato de salida cuando la
@@ -241,6 +350,7 @@ function buildEngDemoPayload(agent, input) {
 function buildDemoPayload(agent, input) {
   if (agent.module === 'AGT-ADS') return buildAdsDemoPayload(agent, input);
   if (agent.module === 'AGT-ENG') return buildEngDemoPayload(agent, input);
+  if (agent.module === 'AGT-CON') return buildConDemoPayload(agent, input);
   const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
   return {
     modo: 'DEMO_LOCAL',

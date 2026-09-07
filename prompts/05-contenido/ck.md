@@ -26,7 +26,8 @@
 >
 > Reglas: cada kit incluye precio simbólico para el primer copeo, entrega por zona en
 > la ruta de recompra, y el copy ya viene listo para CP/CC en versiones de imagen,
-> reel y WhatsApp.
+> reel y WhatsApp. La campaña se dispara automáticamente vía
+> `N8N_WEBHOOK_URL` / `MAKE_WEBHOOK_URL` (lote + cupo + copy listo para publicación).
 
 ## 🎯 Rol y misión
 
