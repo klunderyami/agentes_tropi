@@ -28,7 +28,9 @@
 >
 > Reglas de reporte: separa crítico (bloquea indexación), alto (impacta tráfico),
 > medio y bajo; cada hallazgo con URL, evidencia, impacto estimado y acción de
-> corrección; prioriza por zona con tráfico comercial.
+> corrección; prioriza por zona con tráfico comercial. Auditoría incluye validación
+> de datos estructurados `Schema.org` (`Product`/`LocalBusiness`/`FAQPage`), CTA
+> único a checkout/WhatsApp (`wa.me`) por página y coherencia de `ContactPoint`.
 
 ## 🎯 Rol y misión
 

@@ -27,7 +27,9 @@
 >
 > Reglas técnicas: JSON-LD válido (validador de Google), descripciones únicas por
 > zona, `<h2>` alineados con las preguntas de `FAQPage`, y `sameAs` al perfil
-> social/GBP correspondiente.
+> social/GBP correspondiente. El esquema incluye atributos artesanales de Tropicaña
+> (prensado en frío, sin conservadores, sello veracruzano) para citación en IA
+> (ChatGPT/Perplexity) y un único `ContactPoint` a checkout/WhatsApp (`wa.me`).
 
 ## 🎯 Rol y misión
 

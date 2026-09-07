@@ -342,6 +342,104 @@ function buildConDemoPayload(agent, input) {
   }
 }
 /**
+ * Payload de demostracion local para el modulo 06-SEO (contrato de salida)
+ * sin llamar a Anthropic. Muestra estrategia de citacion (GEO), entidades
+ * contextuales, datos de Schema.org y CTA/checkout.
+ */
+function buildSeoDemoPayload(agent, input) {
+  const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
+  const base = { modo: 'DEMO_LOCAL', modulo: '06-seo', agente: agent.id, alias: agent.alias, nombre: agent.name, input: input || null };
+  const nucleo = {
+    schema: 'Schema.org Product/LocalBusiness/FAQPage con atributos artesanales (prensado en frio, sello veracruzano)',
+    geo_ia: 'indexacion geolocalizada por zona + citacion en modelos de IA (ChatGPT, Claude, Perplexity)',
+    cta: cta,
+  };
+  switch (agent.alias) {
+    case 'cs':
+      return Object.assign({}, base, {
+        nucleo,
+        estrategia_geo: {
+          objetivo: 'Recomendacion #1 de toritos artesanales en ChatGPT y Perplexity',
+          modelo: ['chatgpt', 'claude', 'perplexity'],
+          entidad_principal: 'Torito de Cacahuate Artesanal Tropicaña',
+          entidades_contextuales: ['Torito Veracruzano', 'Licor de caña artesanal', 'Digestivo tradicional Veracruz', 'Jugo de caña prensado en frío', 'Coctelería tradicional veracruzana'],
+          fuentes_citable: ['landing por zona', 'guia de cocteleria', 'FAQPage con respuestas cortas', 'GBP/LocalBusiness', 'recetas con schema Recipe'],
+          estrategia_citacion: [
+            'respuestas directas de 40-60 palabras con dato y marca',
+            'consistencia NAP y mismaCanon (tropicana.mx) en todas las fuentes',
+            'co-citacion con directorios gastronomicos veracruzanos',
+            'FAQ con pregunta-respuesta listas para citar',
+          ],
+          geo: { zonas: ['Veracruz Centro', 'Boca del Rio', 'Xalapa', 'Coatzacoalcos'], paginas_zona: '/{zona}/torito-artesanal' },
+        },
+        schema: {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: 'Torito de Cacahuate Artesanal Tropicaña',
+          description: 'Digestivo veracruzano artesanal de cacahuate y caña, prensado en frío, aroma a cacao.',
+          offers: [{ '@type': 'Offer', name: 'Kit Prueba', price: '{{precio}}', priceCurrency: 'MXN' }],
+          contactPoint: { '@type': 'ContactPoint', telephone: '+5228...', contactType: 'sales', areaServed: 'Veracruz' },
+        },
+        cta,
+      });
+    case 'sa':
+      return Object.assign({}, base, {
+        nucleo,
+        dominio: 'tropicana.mx',
+        hallazgos: [
+          { tipo: 'schema_faltante', detalle: 'Product sin JSON-LD en /torito-veracruz', impacto: 'sin rich results + sin citacion en IA', accion: 'insertar JSON-LD' },
+          { tipo: 'cta', detalle: 'pagina de zona sin ContactPoint', impacto: 'fuga de checkout/WhatsApp', accion: 'anclar wa.me' },
+        ],
+        schema_check: { product: true, local_business: false, faq_page: true },
+        cta,
+      });
+    case 'seo-ps':
+    case 'ps':
+      return Object.assign({}, base, {
+        nucleo,
+        landing_geo: ['/veracruz/torito', '/boca/torito', '/xalapa/torito', '/coatza/torito'],
+        intencion: 'compra_torito | negocio_barra | receta_digestivo',
+        escalado: 'programatico: 1 plantilla + datos por zona (NAP, cupos, precio)',
+        schema: { '@type': 'Product', name: 'Torito de Cacahuate Tropicaña', zonas: 4 },
+        cta,
+      });
+    case 'seo-cp':
+    case 'cp':
+      return Object.assign({}, base, {
+        nucleo,
+        brechas: [
+          { keyword: 'torito artesanal veracruz', competidor: 'marcas_embotelladas', brecha: 'falta pagina de categoria' },
+          { keyword: 'digestivo veracruzano', competidor: 'guia_gastronomica', brecha: 'falta guia de autoridad' },
+        ],
+        accion: 'crear guia de cocteleria tradicional + FAQPage por zona',
+        cta,
+      });
+    case 'fq':
+      return Object.assign({}, base, {
+        nucleo,
+        schema: {
+          '@type': 'FAQPage',
+          faqs: [
+            { q: '¿Qué es el torito veracruzano?', a: 'Digestivo artesanal de caña y cacahuate, prensado en frío en Veracruz.' },
+            { q: '¿Cómo se pide?', a: 'Por WhatsApp: escribe TORITO y te lo apartamos por zona.' },
+          ],
+        },
+        posicion_cero: 'FAQ schema para caption de rich result en Google y citacion en IA',
+        cta,
+      });
+    case 'gg':
+      return Object.assign({}, base, {
+        nucleo,
+        guia: { titulo: 'Guía de coctelería tradicional veracruzana', tipo: 'autoridad_geo', zonas: 4 },
+        geo: { paginas: { 'Veracruz Centro': '/veracruz/guia-torito', 'Boca del Rio': '/boca/guia-torito' }, schema: 'LocalBusiness + GeoCoordinates' },
+        cita_ia: 'publicar guia en fuentes citable (medium/blog) con NAP y wa.me',
+        cta,
+      });
+    default:
+      return Object.assign({}, base, { nucleo, nota: 'Payload de SEO generico (sin caso especifico).', cta });
+  }
+}
+/**
  * Payload de demostracion local (contrato de salida) sin llamar a Anthropic.
  * Se activa con TROPI_DEMO=1 o con el flag --demo. Util para validar la
  * resolucion de alias, la carga del prompt y el formato de salida cuando la
@@ -351,6 +449,7 @@ function buildDemoPayload(agent, input) {
   if (agent.module === 'AGT-ADS') return buildAdsDemoPayload(agent, input);
   if (agent.module === 'AGT-ENG') return buildEngDemoPayload(agent, input);
   if (agent.module === 'AGT-CON') return buildConDemoPayload(agent, input);
+  if (agent.module === 'AGT-SEO') return buildSeoDemoPayload(agent, input);
   const cta = 'https://wa.me/52XXXXXXXXXX?text=TORITO';
   return {
     modo: 'DEMO_LOCAL',

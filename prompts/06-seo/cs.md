@@ -28,7 +28,9 @@
 > Reglas: investiga intenciones por zona (compra, precio, negocio, feria), usa
 > variantes de keyword local (“jugo de caña en Boca del Río”, “caña prensada
 > Xalapa”), conecta con el mapa de LP/landing por zona y propone interlinking
-> respetando la jerarquía de los 5 pilares.
+> respetando la jerarquía de los 5 pilares. Cada artículo cierra con CTA directo a
+> checkout o WhatsApp (`wa.me`) y puede marcarse con `Schema.org` (ej. `Article` o
+> `FAQPage`) para reforzar la citación generativa (GEO).
 
 ## 🎯 Rol y misión
 

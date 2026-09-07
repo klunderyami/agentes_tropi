@@ -26,7 +26,9 @@
 >
 > Reglas: coherencia de NAP en todo el ecosistema, citas con URL canónica del
 > sitio, embebido del mapa por zona realizado por FM/WD, y reporte de rankeo del
-> map pack (top 3) por keyword de zona.
+> map pack (top 3) por keyword de zona. Cada página de zona lleva `Schema.org`
+> `LocalBusiness`/`GeoCoordinates` y termina con CTA directo a checkout/WhatsApp
+> (`wa.me`) para reforzar búsqueda local y citación en modelos de IA.
 
 ## 🎯 Rol y misión
 

@@ -28,7 +28,9 @@
 >
 > Reglas: NAP (nombre, dirección, teléfono E.164 +52) idéntico en el sitio y en el
 > perfil, horarios reales por zona, publicaciones semanales, respuesta a reseñas en
-> <48h y reporte de llamadas/mensajes del perfil al CRM como leads.
+> <48h y reporte de llamadas/mensajes del perfil al CRM como leads. El perfil se
+> conecta con el `LocalBusiness` de `Schema.org` del sitio y su `ContactPoint`
+> apunta a WhatsApp/checkout (`wa.me`) para citación en IA y búsqueda local.
 
 ## 🎯 Rol y misión
 

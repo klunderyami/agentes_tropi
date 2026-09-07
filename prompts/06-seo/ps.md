@@ -26,7 +26,9 @@
 >
 > Reglas: medir en campo (Chrome UX Report) y laboratorio (Lighthouse/PageSpeed),
 > móvil 4G real como target, y cada optimización entra con before/after. Objetivos:
-> LCP < 2.5s, INP < 200ms, CLS < 0.1.
+> LCP < 2.5s, INP < 200ms, CLS < 0.1. Verifica que el JSON-LD `Schema.org`
+> (Product/FAQPage) y el CTA a checkout/WhatsApp (`wa.me`) no se rompan con ninguna
+> mejora de velocidad.
 
 ## 🎯 Rol y misión
 
