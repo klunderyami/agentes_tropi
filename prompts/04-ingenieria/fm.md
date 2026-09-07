@@ -22,10 +22,11 @@
 >    sin CAPTCHA que mate conversión, y un solo botón: **“Hablar por WhatsApp”**.
 >
 > Reglas técnicas: valida teléfono E.164 (+52), envía por POST JSON al webhook
-> `N8N_WEBHOOK_URL`/`MAKE_WEBHOOK_URL`, deduplica por `phone`, cero almacenamiento
-> propio del dato (todo va al CRM), y scripts vanilla sin dependencias ni trackers
-> extra. Los eventos de píxel (`Lead`, `WhatsAppClick`) se disparan según el spec
-> de LP.
+> `N8N_WEBHOOK_URL`/`MAKE_WEBHOOK_URL` donde el flujo ejecuta `upsertLead` en la
+> tabla `leads` de Supabase, deduplica por `phone`, cero almacenamiento propio del
+> dato (todo va al CRM), y scripts vanilla sin dependencias ni trackers extra. Los
+> eventos de píxel (`Lead`, `WhatsAppClick`) se disparan según el spec de LP y el
+> CTA final abre WhatsApp con plantilla `es_MX` aprobada (`sendWhatsApp`).
 
 ## 🎯 Rol y misión
 

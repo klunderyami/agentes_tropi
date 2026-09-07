@@ -25,7 +25,9 @@
 > Reglas técnicas: firma de webhooks (X-Hub-Signature-256) verificada, eventos
 > `messages`/`statuses` manejados, números en E.164 (+52), mensajes entrantes fuera
 > de horario respondidos por plantilla de reapertura en 24h, y códigos de error de
-> Meta mapeados (131026 template, 131047 número no suscrito, etc.).
+> Meta mapeados (131026 template, 131047 número no suscrito, etc.). El webhook de
+> entrada se conecta al flujo de n8n (`N8N_WEBHOOK_URL`) y registra cada evento en
+> `supabase.leads` vía `upsertLead` para no perder estado.
 >
 > Usa `sendWhatsApp` con `template` para fuera de ventana y texto para dentro.
 

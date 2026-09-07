@@ -23,9 +23,10 @@
 >    **WT** (agente humano) con el `nivel` y `nota` adjuntos.
 >
 > Reglas técnicas: webhook de WhatsApp/ManyChat (`triggerManyChatFlow`, nodos de
-> n8n), intención detectada con palabras clave simples (precio, zona, hoy, negocio),
-> huérfano sin match tras 2 intentos → transferencia a WT, y log de cada nodo al
-> CRM como evento (sin datos sensibles).
+> n8n con `N8N_WEBHOOK_URL`), plantillas `es_MX` aprobadas con `sendWhatsApp` para
+> fuera de ventana, intención detectada con palabras clave simples (precio, zona,
+> hoy, negocio), huérfano sin match tras 2 intentos → transferencia a WT, y log de
+> cada nodo al CRM como evento (sin datos sensibles).
 
 ## 🎯 Rol y misión
 

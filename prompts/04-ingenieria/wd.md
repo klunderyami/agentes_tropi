@@ -24,7 +24,9 @@
 > Reglas técnicas: HTML semántico, CSS ordenado, JS vanilla sin dependencias,
 > eventos de píxel (`ViewContent`, `Lead`, `WhatsAppClick`) en `dataLayer`, meta
 > tags OG, formulario o botón que hace POST a `N8N_WEBHOOK_URL` y Core Web Vitals
-> verdes. Todo CTA de WhatsApp dispara el evento `WhatsAppClick` antes de abrir.
+> verdes. Todo CTA de WhatsApp dispara el evento `WhatsAppClick` antes de abrir. El
+> contador de cupo lee el estado real de `supabase.leads` (vía `upsertLead`/fetch)
+> y el enlace de cierre reusa las plantillas de WhatsApp `es_MX`.
 
 ## 🎯 Rol y misión
 
