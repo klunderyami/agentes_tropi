@@ -170,3 +170,55 @@ create table if not exists public.leads (
 - Rotar `WHATSAPP_TOKEN`, `ANTHROPIC_API_KEY` y `SUPABASE_SERVICE_ROLE_KEY` cada 90 días.
 - Usar `SUPABASE_SERVICE_ROLE_KEY` SOLO en scripts internos; nunca en clientes web.
 - Los prompts de agentes son instancias de negocio: no exponerlos en landing pages.
+
+---
+
+## 8. Dashboard Admin (Next.js) — `/admin`
+
+Panel de Control Privado de Tropicaña construido con **Next.js (App Router) + Tailwind
+CSS + Lucide Icons**, con la paleta de marca: verde caña `#1B3B2B`, dorado ámbar
+`#D4A359`, crema vainilla `#FAF5EF` y tierra oscuro `#2C1D11`.
+
+```bash
+npm install
+npm run dev      # desarrollo → http://localhost:3000/admin
+npm run build    # build de producción (verificación limpia)
+npm start        # servir el build
+```
+
+### Rutas del panel
+
+| Ruta | Módulo |
+|------|--------|
+| `/admin` | Panel de Control (resumen ejecutivo + accesos rápidos) |
+| `/admin/leads` | Pipeline de Leads B2B: Lead Score 0–100, filtros por estado de propuesta y reenvío de propuesta por WhatsApp |
+| `/admin/chat` | Centro de Mensajes: WhatsApp Cloud API (es_MX), Instagram y ManyChat en vivo |
+| `/admin/media` | Galería de Activos de los agentes de Contenido (05): descargar y copiar copy |
+| `/admin/metrics` | Torre de Control: CR, CAC, AOV, ROAS y estado de ejecución por agente |
+
+### Variables nuevas en `.env`
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+WHATSAPP_B2B_TEMPLATE=tropicana_b2b_propuesta   # plantilla es_MX (opcional)
+```
+
+- `NEXT_PUBLIC_SUPABASE_URL` / `NEXT_PUBLIC_SUPABASE_ANON_KEY`: permiten conectar el
+  dashboard a las mismas tablas que alimenta el CLI. **Sin ellas el panel funciona en
+  "modo demo"** con datos de ejemplo.
+- `WHATSAPP_TOKEN` / `WHATSAPP_PHONE_NUMBER_ID` (ya existentes): habilitan el botón
+  *Reenviar propuesta B2B* (usa `POST /api/leads/resend`, plantilla WhatsApp `es_MX`
+  con fallback a texto libre y upsert de `estado_propuesta = 'enviada'`).
+
+### Tablas leídas por el dashboard
+
+| Módulo | Tabla(s) candidatas | Notas |
+|--------|--------------------|-------|
+| Leads | `leads` | Upsert por `phone` (igual que `upsertLead`) |
+| Chat | `conversations` / `conversaciones` | Campos `mensajes` (JSON) y `estado` |
+| Media | `media_assets` / `assets` / `media` | Piezas de agentes 05-Contenido |
+| Métricas | `metricas` / `metrics` | KPIs CR/CAC/AOV/ROAS |
+
+Si una tabla aún no existe o está vacía, el módulo cae elegantemente a datos de
+demostración (marcado con "Modo demo").
