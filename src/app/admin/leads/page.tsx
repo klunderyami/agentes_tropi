@@ -93,9 +93,13 @@ export default function LeadsPage() {
   const resendProposal = async (lead: Lead) => {
     setResending(lead.phone);
     try {
+      const client = getSupabaseClient();
+      if (!client) throw new Error('Supabase no configurado');
+      const { data: sessionData, error: sessionError } = await client.auth.getSession();
+      if (sessionError || !sessionData.session?.access_token) throw new Error('Inicia sesión como administrador para enviar mensajes');
       const res = await fetch('/api/leads/resend', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${sessionData.session.access_token}` },
         body: JSON.stringify({ phone: lead.phone, name: lead.name, nota: lead.nota }),
       });
       const data = (await res.json().catch(() => ({}))) as { ok?: boolean; error?: string };
