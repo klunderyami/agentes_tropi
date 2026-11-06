@@ -21,6 +21,27 @@ interface ResendBody {
  *    equivalente al `upsertLead` del CLI en scripts/src/providers/supabase.js).
  */
 export async function POST(req: NextRequest) {
+  // Fail closed: only a verified Supabase administrator may send messages.
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const allowedIds = (process.env.TROPI_ADMIN_USER_IDS ?? '').split(',').map((id) => id.trim()).filter(Boolean);
+  if (!url || !anonKey || allowedIds.length === 0) {
+    return NextResponse.json({ ok: false, error: 'Administración no configurada.' }, { status: 503 });
+  }
+  const authHeader = req.headers.get('authorization') ?? '';
+  const accessToken = authHeader.startsWith('Bearer ') ? authHeader.slice(7).trim() : '';
+  if (!accessToken) {
+    return NextResponse.json({ ok: false, error: 'Autenticación requerida.' }, { status: 401 });
+  }
+  const authClient = createClient(url, anonKey, { auth: { persistSession: false, autoRefreshToken: false } });
+  const { data: authData, error: authError } = await authClient.auth.getUser(accessToken);
+  if (authError || !authData.user) {
+    return NextResponse.json({ ok: false, error: 'Sesión inválida.' }, { status: 401 });
+  }
+  if (!allowedIds.includes(authData.user.id)) {
+    return NextResponse.json({ ok: false, error: 'Acceso denegado.' }, { status: 403 });
+  }
+
   const body = (await req.json().catch(() => ({}))) as ResendBody;
   const phone = body.phone?.trim();
   if (!phone) {
